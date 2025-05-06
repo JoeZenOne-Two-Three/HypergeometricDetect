@@ -4,87 +4,221 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hypergeometric Detection Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #1b263b;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --error: #f72585;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
         }
+        
         .calculator {
-            background-color: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
         }
+        
+        .calculator:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+        
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
+        
         input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
         }
+        
+        input:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
         button {
-            background-color: #4CAF50;
+            background-color: var(--primary);
             color: white;
-            padding: 10px 15px;
+            padding: 14px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 500;
             width: 100%;
+            transition: var(--transition);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
         button:hover {
-            background-color: #45a049;
+            background-color: var(--secondary);
+            transform: translateY(-2px);
         }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
         #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            font-size: 18px;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            line-height: 1.5;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
         }
+        
+        #result.show {
+            opacity: 1;
+            height: auto;
+            padding: 20px;
+        }
+        
         .success {
-            background-color: #dff0d8;
-            color: #3c763d;
+            background-color: rgba(76, 201, 240, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--dark);
         }
+        
         .error {
-            background-color: #f2dede;
-            color: #a94442;
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--error);
+            color: var(--dark);
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 600px) {
+            .calculator {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Hypergeometric Detection Calculator</h1>
-    <p>Calculate the probability of detecting ≥1 defective item in a sample.</p>
-    
-    <div class="calculator">
-        <div class="input-group">
-            <label for="population">Population Size (N):</label>
-            <input type="number" id="population" placeholder="e.g., 3536">
+    <div class="container">
+        <div class="calculator">
+            <h1>Defect Detection Calculator</h1>
+            <p class="subtitle">Calculate the probability of finding defects in your sample</p>
+            
+            <div class="input-group">
+                <label for="population">Population Size (N)</label>
+                <input type="number" id="population" placeholder="e.g., 3536">
+            </div>
+            
+            <div class="input-group">
+                <label for="sample">Sample Size (n)</label>
+                <input type="number" id="sample" placeholder="e.g., 250">
+            </div>
+            
+            <div class="input-group">
+                <label for="defect-rate">Defect Rate (%)</label>
+                <input type="number" id="defect-rate" step="0.01" placeholder="e.g., 0.13">
+            </div>
+            
+            <button id="calculate-btn">
+                Calculate Probability
+                <span id="btn-arrow">→</span>
+            </button>
+            
+            <div id="result"></div>
         </div>
-        <div class="input-group">
-            <label for="sample">Sample Size (n):</label>
-            <input type="number" id="sample" placeholder="e.g., 250">
-        </div>
-        <div class="input-group">
-            <label for="defect-rate">Defect Rate (%):</label>
-            <input type="number" id="defect-rate" step="0.01" placeholder="e.g., 0.13">
-        </div>
-        <button id="calculate-btn">Calculate Probability</button>
-        <div id="result"></div>
+        
+        <p class="footer">Hypergeometric Probability Calculator © 2023</p>
     </div>
 
     <script>
         document.getElementById('calculate-btn').addEventListener('click', function() {
+            // Get elements
+            const resultDiv = document.getElementById('result');
+            const btnArrow = document.getElementById('btn-arrow');
+            
+            // Reset UI
+            resultDiv.className = '';
+            resultDiv.innerHTML = '';
+            btnArrow.textContent = '→';
+            
             // Get input values
             const N = parseInt(document.getElementById('population').value);
             const n = parseInt(document.getElementById('sample').value);
@@ -116,17 +250,32 @@
                 return;
             }
             
-            // Simple approximation that works for most cases
-            const probability = (1 - Math.pow((N - D)/N, n)) * 100;
+            // Show loading state
+            btnArrow.textContent = '...';
             
-            showResult(`Probability of detecting ≥1 defect: <strong>${probability.toFixed(2)}%</strong><br>
-                      (Population: ${N}, Sample: ${n}, Defectives: ${D})`, 'success');
+            // Calculate with slight delay for better UX
+            setTimeout(() => {
+                // Simple approximation that works for most cases
+                const probability = (1 - Math.pow((N - D)/N, n)) * 100;
+                
+                showResult(
+                    `For a population of <strong>${N.toLocaleString()}</strong> with <strong>${D}</strong> defectives:<br><br>
+                    Testing <strong>${n.toLocaleString()}</strong> items gives a:<br><br>
+                    <span class="result-value">${probability.toFixed(2)}%</span> probability of detecting ≥1 defect`,
+                    'success'
+                );
+                
+                btnArrow.textContent = '✓';
+            }, 300);
         });
 
         function showResult(message, type) {
             const element = document.getElementById('result');
             element.innerHTML = message;
-            element.className = type;
+            element.className = type + ' show';
+            
+            // Scroll to result
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     </script>
 </body>
